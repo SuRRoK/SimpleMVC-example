@@ -30,6 +30,11 @@ $User = Config::getObject('core.user.class');
             <a class="nav-link" href="<?= Url::link("admin/adminusers/index") ?>"> Пользователи </a>
         </li>
         <?php endif; ?>
+        <?php  if ($User->isAllowed("admin/category/index")): ?>
+            <li class="nav-item ">
+                <a class="nav-link" href="<?= Url::link("admin/category/index") ?>"> Категории </a>
+            </li>
+        <?php endif; ?>
         
         <?php  if ($User->isAllowed("login/logout")): ?>
         <li class="nav-item ">

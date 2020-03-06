@@ -37,6 +37,9 @@ body {
     color: #17a2b8;
 }
 
+.pointer {
+    cursor: pointer; !important;
+}
 
 
 

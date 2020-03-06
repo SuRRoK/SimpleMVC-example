@@ -6,7 +6,7 @@ use ItForFree\SimpleMVC\Config;
 /**
  *
  */
-class AdminusersController extends \ItForFree\SimpleMVC\mvc\Controller
+class ArticleController extends \ItForFree\SimpleMVC\mvc\Controller
 {
     
     public $layoutPath = 'admin-main.php';
@@ -107,7 +107,7 @@ class AdminusersController extends \ItForFree\SimpleMVC\mvc\Controller
                 $newAdminusers = $Adminusers->loadFromArray($_POST);
                 $newAdminusers->delete();
                 
-                $this->redirect($Url::link("admin/adminusers/index"));
+                $this->redirect($Url::link("archive/allUsers"));
               
             }
             elseif (!empty($_POST['cancel'])) {

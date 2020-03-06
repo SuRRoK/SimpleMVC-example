@@ -9,7 +9,7 @@ $User = Config::getObject('core.user.class');
 <?php //vdie($viewAdminusers);?>
 
 <h2><?= $editAdminusersTitle ?>
-    <span>
+    <span class="small">
         <?= $User->returnIfAllowed("admin/adminusers/delete", 
             "<a href=" . $Url::link("admin/adminusers/delete&id=" . $_GET['id']) 
             . ">[Удалить]</a>");?>

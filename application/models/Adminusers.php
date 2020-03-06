@@ -70,13 +70,10 @@ class Adminusers extends BaseExampleModel
         //Хеширование пароля
         $this->salt = rand(0,1000000);
         $st->bindValue( ":salt", $this->salt, \PDO::PARAM_STR );
-//        \DebugPrinter::debug($this->salt);
-        
+
         $this->pass .= $this->salt;
         $hashPass = password_hash($this->pass, PASSWORD_BCRYPT);
-//        \DebugPrinter::debug($hashPass);
         $st->bindValue( ":pass", $hashPass, \PDO::PARAM_STR );
-        
         $st->bindValue( ":role", $this->role, \PDO::PARAM_STR );
         $st->bindValue( ":email", $this->email, \PDO::PARAM_STR );
         $st->execute();
@@ -92,7 +89,7 @@ class Adminusers extends BaseExampleModel
         $st = $this->pdo->prepare ( $sql );
         $st->bindValue( ":timestamp", (new \DateTime('NOW'))->format('Y-m-d H:i:s'), \PDO::PARAM_STMT);
         $st->bindValue( ":login", $this->login, \PDO::PARAM_STR );
-        vpre($this);
+
         if ($this->pass !== '') {
             // Хеширование пароля
             $this->salt = rand(0,1000000);
@@ -104,8 +101,6 @@ class Adminusers extends BaseExampleModel
             $hashPass = $prevData->pass;
             $this->salt = $prevData->salt;
         }
-//        vpre($prevData);
-//        vdie($this);
 
         $st->bindValue( ":pass", $hashPass, \PDO::PARAM_STR );
         $st->bindValue( ":salt", $this->salt, \PDO::PARAM_STR );
@@ -113,16 +108,6 @@ class Adminusers extends BaseExampleModel
         $st->bindValue( ":email", $this->email, \PDO::PARAM_STR );
         $st->bindValue( ":id", $this->id, \PDO::PARAM_INT );
         $st->execute();
-    }
-
-    public function checkFieldPassword ($fields) {
-        vpre($fields);
-        vdie($this);
-        if (isset($fields['password']) && $fields['password'] !== '') {
-            $this->password = password_hash($params['password'], PASSWORD_BCRYPT);
-        } else {
-            $this->password = '';
-        }
     }
 
 }

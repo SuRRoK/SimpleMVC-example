@@ -1,5 +1,6 @@
 <?php 
 use ItForFree\SimpleMVC\Config;
+use ItForFree\SimpleMVC\Url;
 
 $User = Config::getObject('core.user.class');
 ?>
@@ -20,13 +21,13 @@ $User = Config::getObject('core.user.class');
      </thead>
     <tbody>
     <?php foreach($users as $user): ?>
-    <tr>
+    <tr class="pointer" onclick="location='<?= Url::link('admin/adminusers/index&id=' . $user->id) ?>'">
         <td> <?= $user->id ?> </td>
         <td> <?= $user->login ?> </td>
         <td>  <?= $user->email ?> </td>
         <td>  <?= $user->timestamp ?> </td>
-        <td>  <?= $User->returnIfAllowed("admin/adminusers/edit", 
-                    "<a href=" . \ItForFree\SimpleMVC\Url::link("admin/adminusers/edit&id=". $user->id) 
+        <td>  <?= $User->returnIfAllowed("admin/adminusers/edit",
+                    "<a href=" . Url::link("admin/adminusers/edit&id=". $user->id)
                     . ">[Редактировать]</a>");?></td>
     </tr>
     <?php endforeach; ?>
