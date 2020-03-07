@@ -2,19 +2,18 @@
 
 namespace application\models;
 
-use ItForFree\SimpleMVC\mvc\Model;
 
 /**
- * Description of Category
+ * Description of Subcategory
  *
  * @author surrok
  */
-class CategoryModel extends Model
+class SubcategoryModel extends CategoryModel
 {
     /**
-     * Имя таблицы с категориями
+     * Имя таблицы с подкатегориями
      */
-    public $tableName = 'categories';
+    public $tableName = 'subcategories';
 
     /**
      * @var string Критерий сортировки строк таблицы
@@ -22,14 +21,9 @@ class CategoryModel extends Model
     public $orderBy = 'name';
 
     /**
-     * @var string Название категории
+     * @var int ID категории, к которой относится подкатегория из БД
      */
-    public $name = null;
-
-    /**
-     * @var string Короткое описание категории
-     */
-    public $description = null;
+    public $categoryId = null;
 
     /**
      * Вставка новой записи в БД
@@ -37,10 +31,11 @@ class CategoryModel extends Model
     public function insert()
     {
         // Вставляем категорию
-        $sql = "INSERT INTO $this->tableName ( name, description ) VALUES ( :name, :description )";
+        $sql = "INSERT INTO $this->tableName ( name, description, categoryId ) VALUES ( :name, :description, :categoryId )";
         $st = $this->pdo->prepare ( $sql );
         $st->bindValue( ":name", $this->name, \PDO::PARAM_STR );
         $st->bindValue( ":description", $this->description, \PDO::PARAM_STR );
+        $st->bindValue( ":categoryId", $this->categoryId, \PDO::PARAM_STR );
         $st->execute();
         $this->id = $this->pdo->lastInsertId();
 
@@ -60,6 +55,21 @@ class CategoryModel extends Model
         $st->bindValue( ":id", $this->id, \PDO::PARAM_INT );
         $st->execute();
 
+    }
+
+    /**
+     * @return array
+     * Возвращает список каткгорий
+     */
+    public static function getCategories()
+    {
+        $categories = new CategoryModel();
+        $categories = $categories->getList()['results'];
+        $categoriesAssoc = [];
+        foreach ($categories as $category) {
+            $categoriesAssoc[$category->id] = $category->name;
+        }
+        return $categoriesAssoc;
     }
 
 }
