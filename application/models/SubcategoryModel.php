@@ -50,26 +50,20 @@ class SubcategoryModel extends CategoryModel
         // Обновляем категорию
         $sql = "UPDATE $this->tableName SET name=:name, description=:description WHERE id = :id";
         $st = $this->pdo->prepare ( $sql );
-        $st->bindValue( ":name", $this->name, \PDO::PARAM_STR );
-        $st->bindValue( ":description", $this->description, \PDO::PARAM_STR );
-        $st->bindValue( ":id", $this->id, \PDO::PARAM_INT );
+        $st->bindValue( ':name', $this->name, \PDO::PARAM_STR );
+        $st->bindValue( ':description', $this->description, \PDO::PARAM_STR );
+        $st->bindValue( ':id', $this->id, \PDO::PARAM_INT );
         $st->execute();
 
     }
 
     /**
      * @return array
-     * Возвращает список каткгорий
+     * Возвращает список категорий в виде ассоциативного массива
      */
-    public static function getCategories()
+    public static function getSubcategoriesAssoc(): array
     {
-        $categories = new CategoryModel();
-        $categories = $categories->getList()['results'];
-        $categoriesAssoc = [];
-        foreach ($categories as $category) {
-            $categoriesAssoc[$category->id] = $category->name;
-        }
-        return $categoriesAssoc;
+        $subcategories = (new self)->getList()['results'];
+        return self::toAssoc($subcategories);
     }
-
 }

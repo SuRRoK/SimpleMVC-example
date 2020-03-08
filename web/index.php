@@ -11,3 +11,4 @@ $config = ItForFree\rusphp\PHP\ArrayLib\Merger::mergeRecursivelyWithReplace(
 \ItForFree\SimpleMVC\Application::get()
     ->setConfiguration($config)
     ->run();
+//NewApplication::get()->setConfiguration($config)->run();

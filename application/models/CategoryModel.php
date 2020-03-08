@@ -62,4 +62,26 @@ class CategoryModel extends Model
 
     }
 
+    /**
+     * @param $array
+     * @return array
+     */
+    protected static function toAssoc($array): array
+    {
+        $assocArray = [];
+        foreach ($array as $el) {
+            $assocArray[$el->id] = $el->name;
+        }
+        return $assocArray;
+    }
+    /**
+     * @return array
+     * Возвращает список категорий в виде ассоциативного массива
+     */
+    public static function getCategoriesAssoc()
+    {
+        $categories = (new self)->getList()['results'];
+        return self::toAssoc($categories);
+    }
+
 }

@@ -11,25 +11,25 @@ class SubcategoryController extends \ItForFree\SimpleMVC\mvc\Controller
 {
     
     public $layoutPath = 'admin-main.php';
-    
+
     protected $rules = [ //вариант 2:  здесь всё гибче, проще развивать в дальнешем
-         ['allow' => true, 'roles' => ['admin']],
-         ['allow' => false, 'roles' => ['?', '@']],
+        ['allow' => true, 'roles' => ['admin']],
+        ['allow' => true, 'roles' => ['auth_user'], 'actions' => ['index']],
     ];
-    
+
     public function indexAction()
     {
         $Subcategory = new Subcategory();
         $subcategoryId = $_GET['id'] ?? null;
-        
+
         if ($subcategoryId) {
             $Subcategory = $Subcategory->getById($_GET['id']);
             $this->view->addVar('Subcategory', $Subcategory);
             $this->view->render('subcategory/view-item.php');
         } else { // выводим полный список
-            
+
             $subcategories = $Subcategory->getList()['results'];
-            $categories = Subcategory::getCategories();
+            $categories = CategoryModel::getCategoriesAssoc();
             $this->view->addVar('categories', $categories);
             $this->view->addVar('subcategories', $subcategories);
             $this->view->render('subcategory/index.php');
@@ -56,7 +56,7 @@ class SubcategoryController extends \ItForFree\SimpleMVC\mvc\Controller
         else {
             $title = 'Добавление новой подкатегории';
 
-            $categories = Subcategory::getCategories();
+            $categories = CategoryModel::getCategoriesAssoc();
             $this->view->addVar('categories', $categories);
             $this->view->addVar('title', $title);
             $this->view->render('subcategory/add.php');
@@ -87,7 +87,7 @@ class SubcategoryController extends \ItForFree\SimpleMVC\mvc\Controller
             $Subcategory = new Subcategory();
             $Subcategory = $Subcategory->getById($id);
             $title = 'Редактирование подкатегории';
-            $categories = Subcategory::getCategories();
+            $categories = CategoryModel::getCategoriesAssoc();
             $this->view->addVar('categories', $categories);
             $this->view->addVar('Subcategory', $Subcategory);
             $this->view->addVar('title', $title);

@@ -1,36 +1,45 @@
 <?php
 namespace application\controllers\admin;
-use \application\models\Adminusers as Adminusers;
+use application\models\ArticleModel as Article;
+use application\models\CategoryModel;
+use application\models\SubcategoryModel;
 use ItForFree\SimpleMVC\Config;
+use ItForFree\SimpleMVC\mvc\Controller;
 
 /**
  *
  */
-class ArticleController extends \ItForFree\SimpleMVC\mvc\Controller
+class ArticleController extends Controller
 {
-    
-    public $layoutPath = 'admin-main.php';
-    
-    protected $rules = [ //вариант 2:  здесь всё гибче, проще развивать в дальнешем
-         ['allow' => true, 'roles' => ['admin']],
-         ['allow' => false, 'roles' => ['?', '@']],
-    ];
-    
-    public function indexAction()
-    {
-        $Adminusers = new Adminusers();
 
-        $userId = $_GET['id'] ?? null;
-        
-        if ($userId) { // если указан конктреный пользователь
-            $viewAdminusers = $Adminusers->getById($_GET['id']);
-            $this->view->addVar('viewAdminusers', $viewAdminusers);
-            $this->view->render('user/view-item.php');
+    public $layoutPath = 'admin-main.php';
+
+    protected $rules = [ //вариант 2:  здесь всё гибче, проще развивать в дальнешем
+        ['allow' => true, 'roles' => ['admin']],
+        ['allow' => true, 'roles' => ['auth_user'], 'actions' => ['index']],
+    ];
+
+    /**
+     *
+     */
+    public function indexAction(): void
+    {
+        $Article = new Article();
+        $articleId = $_GET['id'] ?? null;
+
+        if ($articleId) {
+            $Article = $Article->getById($_GET['id']);
+            $this->view->addVar('Article', $Article);
+            $this->view->render('article/view-item.php');
         } else { // выводим полный список
-            
-            $users = $Adminusers->getList()['results'];
-            $this->view->addVar('users', $users);
-            $this->view->render('user/index.php');
+
+            $articles = $Article->getList()['results'];
+            $categories = CategoryModel::getCategoriesAssoc();
+            $subcategories = SubcategoryModel::getSubcategoriesAssoc();
+            $this->view->addVar('articles', $articles);
+            $this->view->addVar('categories', $categories);
+            $this->view->addVar('subcategories', $subcategories);
+            $this->view->render('article/index.php');
         }
     }
 
@@ -41,24 +50,28 @@ class ArticleController extends \ItForFree\SimpleMVC\mvc\Controller
     {
         $Url = Config::get('core.url.class');
         if (!empty($_POST)) {
-            if (!empty($_POST['saveNewUser'])) {
-                $Adminusers = new Adminusers();
-                $newAdminusers = $Adminusers->loadFromArray($_POST);
-                $newAdminusers->insert(); 
-                $this->redirect($Url::link("admin/adminusers/index"));
-            } 
+            if (!empty($_POST['saveNew'])) {
+                $Article = new Article();
+                $Article = $Article->loadFromArray($_POST);
+                $Article->insert();
+                $this->redirect($Url::link('admin/article/index'));
+            }
             elseif (!empty($_POST['cancel'])) {
-                $this->redirect($Url::link("admin/adminusers/index"));
+                $this->redirect($Url::link('admin/article/index'));
             }
         }
         else {
-            $addAdminusersTitle = "Регистрация пользователя";
-            $this->view->addVar('addAdminusersTitle', $addAdminusersTitle);
-            
-            $this->view->render('user/add.php');
+            $title = 'Добавление новой статьи';
+
+            $categories = CategoryModel::getCategoriesAssoc();
+            $subcategories = SubcategoryModel::getSubcategoriesAssoc();
+            $this->view->addVar('categories', $categories);
+            $this->view->addVar('subcategories', $subcategories);
+            $this->view->addVar('title', $title);
+            $this->view->render('article/add.php');
         }
     }
-    
+
     /**
      * Выводит на экран форму для редактирования статьи (только для Администратора)
      */
@@ -66,33 +79,35 @@ class ArticleController extends \ItForFree\SimpleMVC\mvc\Controller
     {
         $id = $_GET['id'];
         $Url = Config::get('core.url.class');
-        
+
         if (!empty($_POST)) { // это выполняется нормально.
-            
+
             if (!empty($_POST['saveChanges'] )) {
-                $Adminusers = new Adminusers();
-                $newAdminusers = $Adminusers->loadFromArray($_POST);
-                $newAdminusers->update();
-                $this->redirect($Url::link("admin/adminusers/index&id=$id"));
-            } 
+                $Article = new Article();
+                $Article = $Article->loadFromArray($_POST);
+                $Article->update();
+                $this->redirect($Url::link("admin/article/index&id=$id"));
+            }
             elseif (!empty($_POST['cancel'])) {
-                $this->redirect($Url::link("admin/adminusers/index&id=$id"));
+                $this->redirect($Url::link("admin/article/index&id=$id"));
             }
         }
         else {
-            $Adminusers = new Adminusers();
-            $viewAdminusers = $Adminusers->getById($id);
-            
-            $editAdminusersTitle = "Редактирование данных пользователя";
-            
-            $this->view->addVar('viewAdminusers', $viewAdminusers);
-            $this->view->addVar('editAdminusersTitle', $editAdminusersTitle);
-            
-            $this->view->render('user/edit.php');   
+            $Article = new Article();
+            $Article = $Article->getById($id);
+            $title = 'Редактирование статьи';
+            $categories = CategoryModel::getCategoriesAssoc();
+            $subcategories = SubcategoryModel::getSubcategoriesAssoc();
+            $this->view->addVar('categories', $categories);
+            $this->view->addVar('subcategories', $subcategories);
+            $this->view->addVar('Article', $Article);
+            $this->view->addVar('title', $title);
+
+            $this->view->render('article/edit.php');
         }
-        
+
     }
-    
+
     /**
      * Выводит на экран предупреждение об удалении данных (только для Администратора)
      */
@@ -100,30 +115,25 @@ class ArticleController extends \ItForFree\SimpleMVC\mvc\Controller
     {
         $id = $_GET['id'];
         $Url = Config::get('core.url.class');
-        
+
         if (!empty($_POST)) {
-            if (!empty($_POST['deleteUser'])) {
-                $Adminusers = new Adminusers();
-                $newAdminusers = $Adminusers->loadFromArray($_POST);
-                $newAdminusers->delete();
-                
-                $this->redirect($Url::link("archive/allUsers"));
-              
+            if (!empty($_POST['delete'])) {
+                $Article = new Article();
+                $newArticle = $Article->loadFromArray($_POST);
+                $newArticle->delete();
+                $this->redirect($Url::link('admin/article/index'));
             }
             elseif (!empty($_POST['cancel'])) {
-                $this->redirect($Url::link("admin/adminusers/edit&id=$id"));
+                $this->redirect($Url::link("admin/article/edit&id=$id"));
             }
         }
         else {
-            
-            $Adminusers = new Adminusers();
-            $deletedAdminusers = $Adminusers->getById($id);
-            $deleteAdminusersTitle = "Удаление статьи";
-            
-            $this->view->addVar('deleteAdminusersTitle', $deleteAdminusersTitle);
-            $this->view->addVar('deletedAdminusers', $deletedAdminusers);
-            
-            $this->view->render('user/delete.php');
+            $Article = new Article();
+            $Article = $Article->getById($id);
+            $title = 'Удаление статьи';
+            $this->view->addVar('Article', $Article);
+            $this->view->addVar('title', $title);
+            $this->view->render('article/delete.php');
         }
     }
 }

@@ -4,7 +4,7 @@ use \application\models\Adminusers as Adminusers;
 use ItForFree\SimpleMVC\Config;
 
 /**
- *
+ * . DIRECTORY_SEPARATOR
  */
 class AdminusersController extends \ItForFree\SimpleMVC\mvc\Controller
 {
