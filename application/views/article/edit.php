@@ -5,7 +5,6 @@ $Url = Config::getObject('core.url.class');
 $User = Config::getObject('core.user.class');
 
 $currentCategory = '';
-//vpre($Article);
 ?>
 
 
@@ -92,10 +91,18 @@ $currentCategory = '';
             </label>
         </div>
     </div>
-<!--    <div class="form-group">
-        <label for="isActive">Статья публикуется</label>
-        <input type="checkbox" class="" name="isActive" id="isActive" <?/*= $Article->isActive ? 'checked' : ''*/?>>
-    </div>-->
+
+    <div class="form-group">
+        <label for="authors">Авторство</label>
+        <select class="form-control" name="authors[]" multiple size="6">
+            <?php foreach ($users as $userId => $userName) { ?>
+                <option value="<?= $userId ?>"<?php
+                if ($Article->authors && in_array($userName, $Article->authors, true)) {
+                    print ' selected ';
+                }?>><?= htmlspecialchars($userName) ?></option>
+            <?php } ?>
+        </select>
+    </div>
 
     <input type="submit" class="btn btn-primary" name="saveChanges" value="Сохранить">
     <input type="submit" class="btn btn-warning" name="cancel" value="Назад">

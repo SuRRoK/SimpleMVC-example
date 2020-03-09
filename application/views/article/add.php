@@ -2,7 +2,7 @@
 <h2><?= $title ?></h2>
 
 <?php $currentCategory = '';
-//vdie($subcategories);?>
+//vdie($users);?>
 <form id="addArticle" method="post" action="<?= \ItForFree\SimpleMVC\Url::link("admin/article/add")?>">
 
     <div class="form-group">
@@ -51,7 +51,7 @@
                     <?php } }?>
             </noscript>
         </select>
-
+    </div>
 
     <div class="form-group">
         <label for="publicationDate">Дата публикации</label>
@@ -59,8 +59,25 @@
     </div>
 
     <div class="form-group">
-        <label for="isActive">Статья публикуется</label>
-        <input type="checkbox" class="form-control" name="isActive" id="isActive">
+        <span>Публикуется</span>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-primary active">
+                <input type="radio" name="isActive" id="yes" value="yes" autocomplete="off" checked> Да
+            </label>
+            <label class="btn btn-primary">
+                <input type="radio" name="isActive" id="no" value="no" autocomplete="off"> Нет
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="authors">Авторство</label>
+        <select class="form-control" name="authors[]" multiple size="6">
+            <?php foreach ($users as $userId => $userName) { ?>
+
+                <option value="<?= $userId ?>"><?= htmlspecialchars($userName) ?></option>
+            <?php } ?>
+        </select>
     </div>
 
     <input type="submit" class="btn btn-primary" name="saveNew" value="Сохранить">

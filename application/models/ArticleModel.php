@@ -177,4 +177,14 @@ class ArticleModel extends Model
         $st->execute();
     }
 
+    public function getArticleAuthors()
+    {
+        // Обновляем статью
+        $sql = 'SELECT user_id, login FROM articles_users' .
+            ' JOIN users ON user_id = users.id WHERE article_id = :id';
+        $st = $this->pdo->prepare($sql);
+        $st->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $st->execute();
+        $this->authors = $st->fetchAll(PDO::FETCH_KEY_PAIR);
+    }
 }

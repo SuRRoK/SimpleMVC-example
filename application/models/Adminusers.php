@@ -110,4 +110,19 @@ class Adminusers extends BaseExampleModel
         $st->execute();
     }
 
+    /**
+     * @return array
+     * Возвращает список пользователей в виде ассоциативного массива id -> login
+     */
+    public static function getAllAssoc(): array
+    {
+        $thisEl = new static();
+        $sql = "SELECT id, login FROM $thisEl->tableName
+                ORDER BY login";
+        $st = $thisEl->pdo->prepare($sql);
+        $st->execute();
+
+        return $st->fetchAll(\PDO::FETCH_KEY_PAIR);
+    }
+
 }

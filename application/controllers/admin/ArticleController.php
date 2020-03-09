@@ -1,5 +1,6 @@
 <?php
 namespace application\controllers\admin;
+use application\models\Adminusers;
 use application\models\ArticleModel as Article;
 use application\models\CategoryModel;
 use application\models\SubcategoryModel;
@@ -29,10 +30,13 @@ class ArticleController extends Controller
 
         if ($articleId) {
             $Article = $Article->getById($_GET['id']);
+            $Article->getArticleAuthors();
             $categories = CategoryModel::getAllAssoc();
-            $subcategories = SubcategoryModel::getAllAssoc();
             $this->view->addVar('categories', $categories);
+            $subcategories = SubcategoryModel::getAllAssoc();
             $this->view->addVar('subcategories', $subcategories);
+            $users = Adminusers::getAllAssoc();
+            $this->view->addVar('users', $users);
             $this->view->addVar('Article', $Article);
             $this->view->render('article/view-item.php');
         } else { // выводим полный список
@@ -69,7 +73,8 @@ class ArticleController extends Controller
 
             $categories = CategoryModel::getAllAssoc();
             $subcategories = (new SubcategoryModel())->getListShort();
-
+            $users = Adminusers::getAllAssoc();
+            $this->view->addVar('users', $users);
             $this->view->addVar('categories', $categories);
             $this->view->addVar('subcategories', $subcategories);
             $this->view->addVar('title', $title);
@@ -101,10 +106,12 @@ class ArticleController extends Controller
             $Article = new Article();
             $Article = $Article->getById($id);
             $Article->unixDate();
+            $Article->getArticleAuthors();
             $title = 'Редактирование статьи';
             $categories = CategoryModel::getAllAssoc();
             $subcategories = (new SubcategoryModel())->getListShort();
-
+            $users = Adminusers::getAllAssoc();
+            $this->view->addVar('users', $users);
             $this->view->addVar('categories', $categories);
             $this->view->addVar('subcategories', $subcategories);
             $this->view->addVar('Article', $Article);

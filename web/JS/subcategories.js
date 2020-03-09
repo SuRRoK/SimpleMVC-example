@@ -19,7 +19,11 @@ const noCategory = function () {
 };
 
 const generateSubcat = function (array) {
-
+    if (typeof(articleSubcategory) === undefined) {
+        let articleSubcategoryExists = false
+    } else {
+        let articleSubcategoryExists = true
+    }
     const subcategoryInput = document.querySelector('select#subcategory');
     subcategoryInput.disabled = false;
     subcategoryInput.innerHTML = '';
@@ -38,7 +42,7 @@ const generateSubcat = function (array) {
         optionHTML = optionFr.cloneNode(true);
         optionHTML.value = item['id'];
         optionHTML.textContent = item['name'];
-        if(articleSubcategory && articleSubcategory == item['id']) {
+        if(typeof(articleSubcategory) !== 'undefined' && articleSubcategory == item['id']) {
             optionHTML.selected = true;
         }
         optionGroupHTML.appendChild(optionHTML);
