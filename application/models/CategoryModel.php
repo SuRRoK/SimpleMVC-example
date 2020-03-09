@@ -63,25 +63,18 @@ class CategoryModel extends Model
     }
 
     /**
-     * @param $array
      * @return array
+     * Возвращает список категорий в виде ассоциативного массива id -> name
      */
-    protected static function toAssoc($array): array
+    public static function getAllAssoc(): array
     {
-        $assocArray = [];
-        foreach ($array as $el) {
-            $assocArray[$el->id] = $el->name;
-        }
-        return $assocArray;
-    }
-    /**
-     * @return array
-     * Возвращает список категорий в виде ассоциативного массива
-     */
-    public static function getCategoriesAssoc()
-    {
-        $categories = (new self)->getList()['results'];
-        return self::toAssoc($categories);
+        $thisEl = new static();
+        $sql = "SELECT id, name FROM $thisEl->tableName
+                ORDER BY name";
+        $st = $thisEl->pdo->prepare($sql);
+        $st->execute();
+
+        return $st->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
 
 }

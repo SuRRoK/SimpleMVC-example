@@ -57,13 +57,17 @@ class SubcategoryModel extends CategoryModel
 
     }
 
-    /**
-     * @return array
-     * Возвращает список категорий в виде ассоциативного массива
-     */
-    public static function getSubcategoriesAssoc(): array
+    public function getListShort()
     {
-        $subcategories = (new self)->getList()['results'];
-        return self::toAssoc($subcategories);
+        $sql = "SELECT SQL_CALC_FOUND_ROWS subcategories.id,subcategories.name, categoryId," .
+            "categories.name AS categoryName FROM subcategories " .
+            "LEFT JOIN categories ON subcategories.categoryId = categories.id ORDER BY categoryId";
+
+        $st = $this->pdo->prepare( $sql );
+        $st->execute();
+        $modelClassName = static::class;
+        $list = $st->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $list;
     }
 }

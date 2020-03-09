@@ -21,7 +21,7 @@ class ArticleModel extends Model
     /**
      * @var string Критерий сортировки строк таблицы
      */
-    public $orderBy = '$publicationDate';
+    public $orderBy = 'id';
 
     /**
      * @var int Дата первой публикации статьи
@@ -65,14 +65,43 @@ class ArticleModel extends Model
      */
     public $authors = null;
 
+    public function loadFromArray($arr)
+    {
+        $newInstance = new static($arr);
+
+        // Обрабатываем галочку статуса статьи
+        $newInstance->isActive = isset($arr['isActive']) && $arr['isActive'] === 'yes';
+        // Обрабатываем ID подкатегории
+        if (isset($arr['subcategoryId']) && $arr['subcategoryId'] !== '0') {
+            $newInstance->subcategoryId = (int)$arr['subcategoryId'];
+        } else {
+            $newInstance->subcategoryId = null;
+        }
+        // Обрабатываем дату публикации
+        if (isset($arr['publicationDate'])) {
+            $newInstance->unixDate();
+        }
+        return $newInstance;
+    }
+
+    public function unixDate(): void
+    {
+        $publicationDate = explode('-', $this->publicationDate);
+
+        if (count($publicationDate) === 3) {
+            [$y, $m, $d] = $publicationDate;
+            $this->publicationDate = mktime(0, 0, 0, $m, $d, $y);
+        }
+    }
+
     /**
      * Вставка новой записи в БД
      */
     public function insert()
     {
         // Вставляем статью
-        $sql = "INSERT INTO $this->tableName ( publicationDate, categoryId, subcategoryId, title, summary, content, is_active)" .
-            "VALUES ( FROM_UNIXTIME(:publicationDate), :categoryId, :subcategoryId, :title, :summary, :content, :isActive )";
+        $sql = "INSERT INTO $this->tableName ( publicationDate, categoryId, subcategoryId, title, summary, content, isActive)" .
+            'VALUES ( FROM_UNIXTIME(:publicationDate), :categoryId, :subcategoryId, :title, :summary, :content, :isActive )';
         $st = $this->pdo->prepare($sql);
         $st->bindValue(":publicationDate", $this->publicationDate, PDO::PARAM_INT);
         $st->bindValue(":categoryId", $this->categoryId, PDO::PARAM_INT);
@@ -85,19 +114,21 @@ class ArticleModel extends Model
 
         $this->id = $this->pdo->lastInsertId();
 
+        if ($this->authors) {
+            $this->insertAuthors();
+//            $authors = '';
+//            foreach ($this->authors as $author) {
+//                $authors .= "($this->id,$author),";
+//            }
+//            $authors = mb_substr($authors, 0, -1);
+//            $sql = "INSERT INTO articles_users (article_id, user_id) VALUES $authors";
+//            $st = $this->pdo->query($sql);
 
-        $authors = '';
-        foreach ($this->authors as $author) {
-            $authors .= "($this->id,$author),";
+            /*        $sql = "INSERT INTO articles_users (article_id, user_id) VALUES :authors";
+                    $st = $conn->prepare($sql);
+                    $st->bindValue(":authors", $authors);
+                    $st->execute();*/
         }
-        $authors = mb_substr($authors, 0, -1);
-        $sql = "INSERT INTO articles_users (article_id, user_id) VALUES $authors";
-        $st = $this->pdo->query($sql);
-        $this->insertAuthors($this->pdo, $this->id, $this->authors);
-        /*        $sql = "INSERT INTO articles_users (article_id, user_id) VALUES :authors";
-                $st = $conn->prepare($sql);
-                $st->bindValue(":authors", $authors);
-                $st->execute();*/
     }
 
     /**
@@ -107,8 +138,8 @@ class ArticleModel extends Model
     {
         // Обновляем статью
         $sql = "UPDATE $this->tableName SET publicationDate=FROM_UNIXTIME(:publicationDate),"
-            . " categoryId=:categoryId, subcategoryId=:subcategoryId, title=:title, summary=:summary,"
-            . " content=:content, is_active=:isActive WHERE id = :id";
+            . ' categoryId=:categoryId, subcategoryId=:subcategoryId, title=:title, summary=:summary,'
+            . ' content=:content, isActive=:isActive WHERE id = :id';
         $st = $this->pdo->prepare($sql);
         $st->bindValue(":publicationDate", $this->publicationDate, PDO::PARAM_INT);
         $st->bindValue(":categoryId", $this->categoryId, PDO::PARAM_INT);
@@ -119,26 +150,30 @@ class ArticleModel extends Model
         $st->bindValue(":id", $this->id, PDO::PARAM_INT);
         $st->bindValue(":isActive", $this->isActive, PDO::PARAM_INT);
         $st->execute();
-        $this->deleteAuthors($this->pdo, $this->id);
-        $this->insertAuthors($this->pdo, $this->id, $this->authors);
+
+        $this->deleteAuthors();
+
+        if ($this->authors) {
+            $this->insertAuthors();
+        }
     }
 
-    private function insertAuthors($connection, $articleId, $authors)
+    private function insertAuthors()
     {
-        foreach ($authors as $author) {
-            $sql = "INSERT INTO articles_users (article_id, user_id) VALUES (:articleId, :authorId)";
-            $st = $connection->prepare($sql);
-            $st->bindValue(":authorId", $author, PDO::PARAM_INT);
-            $st->bindValue(":articleId", $articleId, PDO::PARAM_INT);
+        foreach ($this->authors as $author) {
+            $sql = 'INSERT INTO articles_users (article_id, user_id) VALUES (:articleId, :authorId)';
+            $st = $this->pdo->prepare($sql);
+            $st->bindValue(':authorId', $author, PDO::PARAM_INT);
+            $st->bindValue(':articleId', $this->id, PDO::PARAM_INT);
             $st->execute();
         }
     }
 
-    private function deleteAuthors($connection, $articleId)
+    private function deleteAuthors()
     {
-        $sql = "DELETE FROM articles_users WHERE article_id = :id";
-        $st = $connection->prepare($sql);
-        $st->bindValue(":id", $articleId, PDO::PARAM_INT);
+        $sql = 'DELETE FROM articles_users WHERE article_id = :id';
+        $st = $this->pdo->prepare($sql);
+        $st->bindValue(':id', $this->id, PDO::PARAM_INT);
         $st->execute();
     }
 

@@ -1,6 +1,9 @@
 <?php include('includes/admin-subcategories-nav.php'); ?>
 <h2><?= $title ?></h2>
-
+<?php //pdie($categories); ?>
+<?php //foreach ($categories as $categoryId => $category[0]) {
+//   vpre($category[0][0]);
+// } ?>
 <form id="addUser" method="post" action="<?= \ItForFree\SimpleMVC\Url::link("admin/subcategory/add")?>">
 
     <div class="form-group">
@@ -14,9 +17,12 @@
     <div class="form-group">
         <label for="category">Category</label>
         <select class="form-control" name="categoryId" id="category">
-            <?php foreach ($categories as $categoryId => $categoryName) { ?>
-                <option value="<?= $categoryId ?>"><?= $categoryName ?></option>
-            <?php } ?>
+        <?php foreach ($categories as $categoryId => $categoryName) { ?>
+            <option value="<?= $categoryId ?>"><?= $categoryName ?></option>
+        <?php } ?>
+<!--            <?php /*foreach ($categories as $categoryId => $category[0]) { */?>
+                <option value="<?/*= $categoryId */?>"><?/*= $category[0][0] */?></option>
+            --><?php /*} */?>
         </select>
     </div>
     <input type="submit" class="btn btn-primary" name="saveNew" value="Сохранить">

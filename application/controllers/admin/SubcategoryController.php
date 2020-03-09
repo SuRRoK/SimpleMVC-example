@@ -29,7 +29,7 @@ class SubcategoryController extends \ItForFree\SimpleMVC\mvc\Controller
         } else { // выводим полный список
 
             $subcategories = $Subcategory->getList()['results'];
-            $categories = CategoryModel::getCategoriesAssoc();
+            $categories = CategoryModel::getAllAssoc();
             $this->view->addVar('categories', $categories);
             $this->view->addVar('subcategories', $subcategories);
             $this->view->render('subcategory/index.php');
@@ -56,7 +56,8 @@ class SubcategoryController extends \ItForFree\SimpleMVC\mvc\Controller
         else {
             $title = 'Добавление новой подкатегории';
 
-            $categories = CategoryModel::getCategoriesAssoc();
+            $categories = CategoryModel::getAllAssoc();
+//            $categories = CategoryModel::getAllAssoc();
             $this->view->addVar('categories', $categories);
             $this->view->addVar('title', $title);
             $this->view->render('subcategory/add.php');
@@ -87,7 +88,7 @@ class SubcategoryController extends \ItForFree\SimpleMVC\mvc\Controller
             $Subcategory = new Subcategory();
             $Subcategory = $Subcategory->getById($id);
             $title = 'Редактирование подкатегории';
-            $categories = CategoryModel::getCategoriesAssoc();
+            $categories = CategoryModel::getAllAssoc();
             $this->view->addVar('categories', $categories);
             $this->view->addVar('Subcategory', $Subcategory);
             $this->view->addVar('title', $title);

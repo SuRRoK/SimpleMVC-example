@@ -6,7 +6,7 @@ use ItForFree\SimpleMVC\Url;
 $User = Config::getObject('core.user.class');
 
 
-//ppre($User->explainAccess("admin/adminusers/index"));
+//ppre($User->explainAccess("admin/category/index"));
 
 ?>
 
@@ -25,16 +25,17 @@ $User = Config::getObject('core.user.class');
             <a class="nav-link" href="<?= Url::link("login/login") ?>">[Вход]</a>
         </li>
         <?php endif; ?>
-        <?php  if ($User->isAllowed("admin/adminusers/index")): ?>
-        <li class="nav-item ">
-            <a class="nav-link" href="<?= Url::link("admin/adminusers/index") ?>"> Пользователи </a>
-        </li>
-        <?php endif; ?>
-        
+
         <?php  if ($User->isAllowed("login/logout")): ?>
         <li class="nav-item ">
             <a class="nav-link" href="<?= Url::link("login/logout") ?>">Выход (<?= $User->userName ?>)</a>
         </li>
+        <?php endif; ?>
+
+        <?php  if ($User->isAllowed("admin/adminusers/index")): ?>
+            <li class="nav-item ">
+                <a class="nav-link" href="<?= Url::link("admin/adminusers/index") ?>"> Админка </a>
+            </li>
         <?php endif; ?>
     </ul>
    </div>

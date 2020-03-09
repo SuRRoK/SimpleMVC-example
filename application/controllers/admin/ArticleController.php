@@ -29,13 +29,17 @@ class ArticleController extends Controller
 
         if ($articleId) {
             $Article = $Article->getById($_GET['id']);
+            $categories = CategoryModel::getAllAssoc();
+            $subcategories = SubcategoryModel::getAllAssoc();
+            $this->view->addVar('categories', $categories);
+            $this->view->addVar('subcategories', $subcategories);
             $this->view->addVar('Article', $Article);
             $this->view->render('article/view-item.php');
         } else { // выводим полный список
 
             $articles = $Article->getList()['results'];
-            $categories = CategoryModel::getCategoriesAssoc();
-            $subcategories = SubcategoryModel::getSubcategoriesAssoc();
+            $categories = CategoryModel::getAllAssoc();
+            $subcategories = SubcategoryModel::getAllAssoc();
             $this->view->addVar('articles', $articles);
             $this->view->addVar('categories', $categories);
             $this->view->addVar('subcategories', $subcategories);
@@ -63,8 +67,9 @@ class ArticleController extends Controller
         else {
             $title = 'Добавление новой статьи';
 
-            $categories = CategoryModel::getCategoriesAssoc();
-            $subcategories = SubcategoryModel::getSubcategoriesAssoc();
+            $categories = CategoryModel::getAllAssoc();
+            $subcategories = (new SubcategoryModel())->getListShort();
+
             $this->view->addVar('categories', $categories);
             $this->view->addVar('subcategories', $subcategories);
             $this->view->addVar('title', $title);
@@ -95,9 +100,11 @@ class ArticleController extends Controller
         else {
             $Article = new Article();
             $Article = $Article->getById($id);
+            $Article->unixDate();
             $title = 'Редактирование статьи';
-            $categories = CategoryModel::getCategoriesAssoc();
-            $subcategories = SubcategoryModel::getSubcategoriesAssoc();
+            $categories = CategoryModel::getAllAssoc();
+            $subcategories = (new SubcategoryModel())->getListShort();
+
             $this->view->addVar('categories', $categories);
             $this->view->addVar('subcategories', $subcategories);
             $this->view->addVar('Article', $Article);
@@ -119,8 +126,8 @@ class ArticleController extends Controller
         if (!empty($_POST)) {
             if (!empty($_POST['delete'])) {
                 $Article = new Article();
-                $newArticle = $Article->loadFromArray($_POST);
-                $newArticle->delete();
+                $Article = $Article->loadFromArray($_POST);
+                $Article->delete();
                 $this->redirect($Url::link('admin/article/index'));
             }
             elseif (!empty($_POST['cancel'])) {
