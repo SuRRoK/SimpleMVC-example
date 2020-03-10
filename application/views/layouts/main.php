@@ -10,7 +10,7 @@ $User = Config::getObject('core.user.class');
     <?php include('includes/main/head.php'); ?>
     <body> 
         <?php include('includes/main/nav.php'); ?>
-        <div class="container">
+        <div class="container" id="container">
             <?= $CONTENT_DATA ?>
         </div>
         <?php include('includes/main/footer.php'); ?>

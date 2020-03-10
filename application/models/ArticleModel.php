@@ -126,7 +126,7 @@ class ArticleModel extends Model
 //            $st = $this->pdo->query($sql);
 
             /*        $sql = "INSERT INTO articles_users (article_id, user_id) VALUES :authors";
-                    $st = $conn->prepare($sql);
+                    $st = $this->pdo->prepare($sql);
                     $st->bindValue(":authors", $authors);
                     $st->execute();*/
         }
@@ -187,5 +187,81 @@ class ArticleModel extends Model
         $st->bindValue(':id', $this->id, PDO::PARAM_INT);
         $st->execute();
         $this->authors = $st->fetchAll(PDO::FETCH_KEY_PAIR);
+    }
+
+    /**
+     * Возвращает все (или диапазон) объекты Article из базы данных
+     *
+     * @param int $numRows Количество возвращаемых строк (по умолчанию = 1000000)
+     * @param array $categoryId Вернуть статьи только из категории или подкатегории с указанным ID
+     * @param bool $allArticles Возврат всех, либо только активных статей
+     * @param string $order Столбец, по которому выполняется сортировка статей (по умолчанию = "publicationDate DESC")
+     * @return array|false Двух элементный массив: results => массив объектов Article; totalRows => общее количество строк
+     */
+    public function getListWithParam($numRows = 1000000,
+                                   $categoryId = [], $allArticles = true, $order = 'publicationDate DESC')
+    {
+        $categoryType = $categoryId['type'] ?? false;
+        $categoryValue = $categoryId['value'] ?? '';
+
+        $categoryClause = $categoryType ? "$categoryType = :$categoryType" : '';
+        if ($categoryType === 'subcategoryId' && $categoryValue === 'none') {
+            $categoryClause = 'subcategoryId IS NULL';
+        }
+        $activeClause = !$allArticles ? 'isActive = 1' : '';
+        $filter = '';
+        if ($categoryClause && $activeClause) {
+            $filter = "WHERE $categoryClause AND $activeClause";
+        } elseif ($categoryClause || $activeClause) {
+            $filter = "WHERE $categoryClause $activeClause";
+        }
+        $sql = "SELECT SQL_CALC_FOUND_ROWS *, UNIX_TIMESTAMP(publicationDate) 
+                AS publicationDate
+                FROM articles $filter
+                ORDER BY  $order  LIMIT :numRows";
+
+        $st = $this->pdo->prepare($sql);
+
+//                        Здесь $st - текст предполагаемого SQL-запроса, причём переменные не отображаются
+        $st->bindValue(':numRows', $numRows, PDO::PARAM_INT);
+
+        if (($categoryType && $categoryValue !== 'none')) {
+            $st->bindValue(":$categoryType", $categoryValue, PDO::PARAM_INT);
+        }
+
+        $st->execute(); // выполняем запрос к базе данных
+
+//                        Здесь $st - текст предполагаемого SQL-запроса, причём переменные не отображаются
+        $list = array();
+
+        while ($row = $st->fetch()) {
+            $article = new self($row);
+            $list[] = $article;
+        }
+
+        // Получаем общее количество статей, которые соответствуют критерию
+        $sql = 'SELECT FOUND_ROWS() AS totalRows';
+        $totalRows = $this->pdo->query($sql)->fetch();
+
+        $sql = 'SELECT article_id, user_id, login FROM articles_users' .
+            ' JOIN users ON user_id = users.id ORDER BY article_id';
+        $st = $this->pdo->query($sql);
+
+        $authors = [];
+        while ($author = $st->fetch(PDO::FETCH_ASSOC)) {
+            $authors[$author['article_id']][$author['user_id']] = $author['login'];
+        }
+        $this->pdo = null;
+
+        foreach ($list as $article) {
+            if (isset($authors[$article->id])) {
+                $article->authors = $authors[$article->id];
+            }
+        }
+
+        return [
+            'results' => $list,
+            'totalRows' => $totalRows[0]
+        ];
     }
 }
