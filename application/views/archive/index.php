@@ -5,7 +5,7 @@
 </div>
 <div class="row">
     <div class="col ">
-      <p class="lead"> Добро пожаловать в новостник, созданный на SimpleMVC! </p>
+      <p class="lead"><?=$lead?></p>
     </div>
 </div>
 
@@ -40,15 +40,13 @@
                 <?php }
                 else { ?>
                     <span class="category">
-                        <a href=".?route=archive/category&amp;id=0">Без категорий</a>
+                        <a href="<?= Url::link('archive/category&id=0') ?>">Без категорий</a>
                     </span>
                 <?php } ?>
                 <button class="btn-show-author btn btn-sm btn-primary" data-articleId="<?= $Article->id?>">Show authors</button>
                 <span class="category hidden" id="authors<?= $Article->id?>"></span>
             </h3>
-            <p class="summary"><?php
-                $position = mb_strlen($Article->content) > $contentFirstSymbols ?  mb_strpos($Article->content, ' ', $contentFirstSymbols) : $contentFirstSymbols;
-                echo htmlspecialchars(mb_substr($Article->content, 0, $position) . '...')?></p>
+            <p class="summary"><?= $Article->summary ?></p>
             <img id="loader-identity" src="JS/ajax-loader.gif" alt="gif">
 
             <ul class="ajax-load">

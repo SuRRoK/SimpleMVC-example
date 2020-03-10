@@ -12,13 +12,13 @@ $User = Config::getObject('core.user.class');
     
     <?php  if ($User->isAllowed("admin/subcategory/index")): ?>
     <li class="nav-item ">
-        <a class="nav-link" href="<?= Url::link("admin/subcategory/index") ?>">Список</a>
+        <a class="btn btn-light m-2" href="<?= Url::link("admin/subcategory/index") ?>">Список</a>
     </li>
     <?php endif; ?>
     
     <?php  if ($User->isAllowed("admin/subcategory/add")): ?>
     <li class="nav-item ">
-        <a class="nav-link" href="<?= Url::link("admin/subcategory/add") ?>"> + Добавить подкатегорию</a>
+        <a class="btn btn-success m-2" href="<?= Url::link("admin/subcategory/add") ?>"> + Добавить подкатегорию</a>
     </li>
     <?php endif; ?>  
 </ul>

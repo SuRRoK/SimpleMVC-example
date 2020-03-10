@@ -12,13 +12,13 @@ $User = Config::getObject('core.user.class');
     
     <?php  if ($User->isAllowed("admin/article/index")): ?>
     <li class="nav-item ">
-        <a class="nav-link" href="<?= Url::link("admin/article/index") ?>">Список</a>
+        <a class="btn btn-light m-2" href="<?= Url::link("admin/article/index") ?>">Список</a>
     </li>
     <?php endif; ?>
     
     <?php  if ($User->isAllowed("admin/article/add")): ?>
     <li class="nav-item ">
-        <a class="nav-link" href="<?= Url::link("admin/article/add") ?>"> + Добавить статью</a>
+        <a class="btn btn-success m-2" href="<?= Url::link("admin/article/add") ?>"> + Добавить статью</a>
     </li>
     <?php endif; ?>  
 </ul>

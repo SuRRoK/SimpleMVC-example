@@ -11,7 +11,6 @@ $config = [
         ],
         'router' => [
             'class' => \ItForFree\SimpleMVC\Router::class
-
         ],
         'url' => [ 
             'class' => \ItForFree\SimpleMVC\Url::class
@@ -29,7 +28,11 @@ $config = [
         ],
         'session' => [
             'class' => ItForFree\SimpleMVC\Session::class
-        ]
+        ],
+        'homepage' => [
+            'firstContentSymbols' => 50,
+            'homepageNumArticles' => 5,
+        ],
     ]    
 ];
 

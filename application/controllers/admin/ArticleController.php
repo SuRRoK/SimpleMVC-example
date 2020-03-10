@@ -17,7 +17,7 @@ class ArticleController extends Controller
 
     protected $rules = [ //вариант 2:  здесь всё гибче, проще развивать в дальнешем
         ['allow' => true, 'roles' => ['admin']],
-        ['allow' => true, 'roles' => ['auth_user'], 'actions' => ['index']],
+        ['allow' => true, 'roles' => ['auth_user'], 'actions' => ['index', 'add']],
     ];
 
     /**

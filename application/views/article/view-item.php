@@ -20,15 +20,17 @@ $User = Config::getObject('core.user.class');
         <h5 class="card-title">Дата добавления: <span class="card-text small"><?= $Article->publicationDate ?></span></h5>
     </div>
     <div class="card-body">
-        <span class="btn btn-warning"><?= $User->returnIfAllowed("admin/article/edit",
-            '<a href=' . Url::link('admin/article/edit&id=' . $Article->id)
-            . '>[Редактировать]</a>')?>
-        </span>
-        <span class="btn btn-danger">
+        <?= $User->returnIfAllowed("admin/article/edit",
+            '<span class="btn btn-warning">
+                <a href=' . Url::link('admin/article/edit&id=' . $Article->id)
+            . '>[Редактировать]</a></span>')?>
+
+
         <?= $User->returnIfAllowed('admin/article/delete',
-            '<a class="text-black-50" href=' . Url::link('admin/article/delete&id=' . $Article->id)
-            . '>[Удалить]</a>')?>
-        </span>
+            '<span class="btn btn-danger">
+                <a class="text-black-50" href=' . Url::link('admin/article/delete&id=' . $Article->id)
+            . '>[Удалить]</a></span>')?>
+
     </div>
     <div class="card-body">
         <?php if ($Article->authors) {?>
@@ -37,4 +39,8 @@ $User = Config::getObject('core.user.class');
     </div>
 </div>
 <br>
-<p><?= $Article->content ?></p>
+<div class="card" style="width: 100%; min-width: 320px; margin-bottom: 80px">
+<div class="card-body">
+<?= $Article->content ?>
+</div>
+</div>

@@ -20,6 +20,12 @@ $User = Config::getObject('core.user.class');
         <li class="nav-item ">
             <a class="nav-link" href="/">Главная</a>
         </li>
+        <?php  if ($User->isAllowed("archive/index")): ?>
+            <li class="nav-item ">
+                <a class="nav-link" href="<?= Url::link("archive/index") ?>">Смотреть все</a>
+            </li>
+        <?php endif; ?>
+
         <?php  if ($User->isAllowed("login/login")): ?>
         <li class="nav-item ">
             <a class="nav-link" href="<?= Url::link("login/login") ?>">[Вход]</a>
@@ -32,9 +38,9 @@ $User = Config::getObject('core.user.class');
         </li>
         <?php endif; ?>
 
-        <?php  if ($User->isAllowed("admin/adminusers/index")): ?>
+        <?php  if ($User->isAllowed("admin/article/index")): ?>
             <li class="nav-item ">
-                <a class="nav-link" href="<?= Url::link("admin/adminusers/index") ?>"> Админка </a>
+                <a class="nav-link" href="<?= Url::link("admin/article/index") ?>"> Админка </a>
             </li>
         <?php endif; ?>
     </ul>

@@ -53,11 +53,11 @@ h1 {
     line-height: 1.2em;
 }
 
-h2, h2 a {
+h2, h3, h3 a, h2 a {
     color: #edc951;
 }
 
-h2 a {
+h2 a, h3 a {
     text-decoration: none;
 }
 

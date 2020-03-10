@@ -7,11 +7,14 @@ $User = Config::getObject('core.user.class');
 <?php include('includes/admin-subcategories-nav.php'); ?>
 
 <h2><?= $Subcategory->name ?>
-    <span class="small">
+    <span>
         <?= $User->returnIfAllowed("admin/subcategory/edit",
-            "<a href=" . \ItForFree\SimpleMVC\Url::link("admin/subcategory/edit&id=". $Subcategory->id)
+            "<a class='btn btn-warning btn-sm' href=" . \ItForFree\SimpleMVC\Url::link("admin/subcategory/edit&id=". $Subcategory->id)
             . ">[Редактировать]</a>");?>
     </span>
-</h2> 
-
-<p>Описание: <?= $Subcategory->description ?></p>
+</h2>
+<div class="card" style="width: 100%; min-width: 320px; margin-bottom: 80px">
+    <div class="card-body">
+        <p>Описание: <?= $Subcategory->description ?></p>
+    </div>
+</div>
