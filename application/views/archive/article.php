@@ -10,10 +10,8 @@
     </div>
 </div>
 
-<?php //vdie($Article);?>
-<!--<h1 style="width: 75%;">--><?php //echo htmlspecialchars( $Article->title )?><!--</h1>-->
 <div style="width: 100%; font-style: italic;"><?= htmlspecialchars( $Article->summary )?></div>
-<div style="width: 100%;"><?= $Article->content?></div>
+<div style="width: 100%;"><?= nl2br($Article->content) ?></div>
 <?php setlocale(LC_ALL, 'ru_RU.UTF-8'); ?>
 <p class="pubDate">Опубликована <?= strftime('%d %B \'%y', $Article->publicationDate)?>
 
@@ -24,7 +22,7 @@
         </a>
         <?php if ($Article->subcategoryId) { ?>
             <a href=".?action=archive&amp;subcategoryId=<?= $Article->subcategoryId?>">
-                -> <?= htmlspecialchars($subcategories[$Article->categoryId] )?>
+                -> <?= htmlspecialchars($subcategories[$Article->subcategoryId] )?>
             </a>
         <?php } else {?>
             -> <a href=".?action=archive&amp;subcategoryId=none">Без подкатегорий</a>

@@ -4,7 +4,6 @@ namespace application\controllers;
 use application\models\ArticleModel;
 use application\models\CategoryModel;
 use application\models\SubcategoryModel;
-use ItForFree\SimpleMVC\Config;
 use ItForFree\SimpleMVC\Url;
 
 

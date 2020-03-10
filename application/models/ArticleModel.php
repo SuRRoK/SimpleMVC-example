@@ -81,7 +81,6 @@ class ArticleModel extends Model
         if (isset($arr['publicationDate'])) {
             $newInstance->unixDate();
         }
-        $newInstance->content = nl2br($newInstance->content);
         return $newInstance;
     }
 

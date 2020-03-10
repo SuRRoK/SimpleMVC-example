@@ -2,7 +2,6 @@
 namespace application\controllers;
 
 use application\models\ArticleModel;
-use ItForFree\SimpleMVC\mvc\Model;
 
 /**
  * Можно использовать для обработки ajax-запросов.
@@ -29,12 +28,12 @@ class AjaxController extends \ItForFree\SimpleMVC\mvc\Controller
     {
         if (isset($_GET['articleId'])) {
             $Article = (new ArticleModel)->getById((int)$_GET['articleId']);
-            echo $Article->content;
+            echo nl2br($Article->content);
         }
         if (isset ($_POST['articleId'])) {
             //die("Привет)");
             $Article = (new ArticleModel)->getById((int)$_POST['articleId']);
-            echo json_encode($Article->content, JSON_THROW_ON_ERROR, 512);
+            echo json_encode(nl2br($Article->content), JSON_THROW_ON_ERROR, 512);
         }
     }
 
