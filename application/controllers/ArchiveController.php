@@ -4,7 +4,7 @@ namespace application\controllers;
 use application\models\ArticleModel;
 use application\models\CategoryModel;
 use application\models\SubcategoryModel;
-use ItForFree\SimpleMVC\Url;
+use ItForFree\SimpleMVC\Config;
 
 
 class ArchiveController extends \ItForFree\SimpleMVC\mvc\Controller
@@ -36,18 +36,23 @@ class ArchiveController extends \ItForFree\SimpleMVC\mvc\Controller
 
     public function categoryAction()
     {
-        $categoryId = null;
-        if (isset( $_GET['id'] )) {
-            $categoryFilter = ['type' => 'categoryId', 'value' => (int)$_GET['id']];
-        } else {
-            $categoryFilter = null;
+        if (isset($_GET['id'])) {
+            $Category = (new CategoryModel())->getById($_GET['id']);
+            if (isset($Category->id)) {
+                $categoryFilter = ['type' => 'categoryId', 'value' => $_GET['id']];
+                $description = $Category->description;
+            } else {
+                $categoryFilter = null;
+                $description = null;
+            }
         }
 
         $articles = (new ArticleModel())->getListWithParam(100000, $categoryFilter, false)['results'];
         $categories = CategoryModel::getAllAssoc();
         $subcategories = SubcategoryModel::getAllAssoc();
-        $lead = ($_GET['id'] === 'none' || !$categories[$_GET['id']]) ? '...  статьям без катеории' : '...  статьям категории ' . $categories[$_GET['id']];
+        $lead = ($_GET['id'] === 'none' || !$categoryFilter || !$categories[$_GET['id']]) ? '...  статьям без катеории' : '...  статьям категории ' . $categories[$_GET['id']];
         $this->view->addVar('lead', $lead);
+        $this->view->addVar('description', $description);
         $this->view->addVar('articles', $articles);
         $this->view->addVar('categories', $categories);
         $this->view->addVar('subcategories', $subcategories);
@@ -58,47 +63,52 @@ class ArchiveController extends \ItForFree\SimpleMVC\mvc\Controller
 
     public function subcategoryAction()
     {
-        $subcategoryId = null;
-        if (isset( $_GET['id'] )) {
+        if (isset($_GET['id'])) {
+            $Subcategory = (new SubcategoryModel())->getById($_GET['id']);
+            if (isset($Subcategory->id)) {
             $categoryFilter = ['type' => 'subcategoryId', 'value' => $_GET['id']];
-        } else {
-            $categoryFilter = null;
+            $description = $Subcategory->description;
+            } else {
+                $categoryFilter = null;
+                $description = null;
+            }
         }
 
         $articles = (new ArticleModel())->getListWithParam(100000, $categoryFilter, false)['results'];
         $categories = CategoryModel::getAllAssoc();
         $subcategories = SubcategoryModel::getAllAssoc();
-        $lead = ($_GET['id'] === 'none' || !$subcategories[$_GET['id']]) ? '...  статьям без подкатеории' : '...  статьям подкатегории ' . $subcategories[$_GET['id']];
+        $lead = ($_GET['id'] === 'none' || !$categoryFilter || !$subcategories[$_GET['id']]) ? '...  статьям без подкатеории' : '...  статьям подкатегории ' . $subcategories[$_GET['id']];
         $this->view->addVar('lead', $lead);
+        $this->view->addVar('description', $description);
         $this->view->addVar('articles', $articles);
         $this->view->addVar('categories', $categories);
         $this->view->addVar('subcategories', $subcategories);
         $this->view->addVar('homepageTitle', $this->homepageTitle);
         $this->view->render('archive/index.php');
-
     }
 
     public function articleAction()
     {
         $categories = CategoryModel::getAllAssoc();
         $subcategories = SubcategoryModel::getAllAssoc();
-
+        $Url = Config::get('core.url.class');
         $this->view->addVar('categories', $categories);
         $this->view->addVar('subcategories', $subcategories);
         $this->view->addVar('homepageTitle', $this->homepageTitle);
 
         if (isset( $_GET['id'])) {
             $Article = (new ArticleModel())->getById($_GET['id']);
-            $Article->getArticleAuthors();
-            $Article->publicationDate = strtotime($Article->publicationDate);
-            if ($Article->id) {
+
+            if (isset($Article->id)) {
+                $Article->getArticleAuthors();
+                $Article->publicationDate = strtotime($Article->publicationDate);
                 $this->view->addVar('Article', $Article);
                 $lead = '';
                 $this->view->addVar('lead', $lead);
                 $this->view->render('archive/article.php');
+            } else {
+                $this->redirect($Url::link('archive/index'));
             }
-        } else {
-            header('Location: ' . URL::link('archive/index'));
         }
     }
 }

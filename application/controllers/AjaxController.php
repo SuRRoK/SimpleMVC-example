@@ -15,12 +15,17 @@ class AjaxController extends \ItForFree\SimpleMVC\mvc\Controller
     {
         if (isset($_GET['articleId'])) {
             $Article = (new ArticleModel)->getById((int)$_GET['articleId']);
-            $Article->getArticleAuthors();
-            if($Article->authors) {
-                echo implode(', ', $Article->authors);
+            if(isset($Article->id)) {
+                $Article->getArticleAuthors();
+                if($Article->authors) {
+                    echo implode(', ', $Article->authors);
+                } else {
+                    echo 'Автор неизвестен';
+                }
             } else {
-                echo 'Автор неизвестен';
+                echo 'Не верный запрос';
             }
+
         }
     }
 
@@ -28,12 +33,11 @@ class AjaxController extends \ItForFree\SimpleMVC\mvc\Controller
     {
         if (isset($_GET['articleId'])) {
             $Article = (new ArticleModel)->getById((int)$_GET['articleId']);
-            echo nl2br($Article->content);
+            echo isset($Article->id) ? nl2br($Article->content) : '';
         }
         if (isset ($_POST['articleId'])) {
-            //die("Привет)");
             $Article = (new ArticleModel)->getById((int)$_POST['articleId']);
-            echo json_encode(nl2br($Article->content), JSON_THROW_ON_ERROR, 512);
+            echo isset($Article->id) ? json_encode(nl2br($Article->content), JSON_THROW_ON_ERROR, 512) : '';
         }
     }
 

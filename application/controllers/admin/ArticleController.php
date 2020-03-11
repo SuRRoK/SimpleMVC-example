@@ -6,6 +6,7 @@ use application\models\CategoryModel;
 use application\models\SubcategoryModel;
 use ItForFree\SimpleMVC\Config;
 use ItForFree\SimpleMVC\mvc\Controller;
+use ItForFree\SimpleMVC\Url;
 
 /**
  *
@@ -25,20 +26,25 @@ class ArticleController extends Controller
      */
     public function indexAction(): void
     {
+        $Url = Config::get('core.url.class');
         $Article = new Article();
         $articleId = $_GET['id'] ?? null;
 
         if ($articleId) {
             $Article = $Article->getById($_GET['id']);
-            $Article->getArticleAuthors();
-            $categories = CategoryModel::getAllAssoc();
-            $this->view->addVar('categories', $categories);
-            $subcategories = SubcategoryModel::getAllAssoc();
-            $this->view->addVar('subcategories', $subcategories);
-            $users = Adminusers::getAllAssoc();
-            $this->view->addVar('users', $users);
-            $this->view->addVar('Article', $Article);
-            $this->view->render('article/view-item.php');
+            if (isset($Article->id)) {
+                $Article->getArticleAuthors();
+                $categories = CategoryModel::getAllAssoc();
+                $this->view->addVar('categories', $categories);
+                $subcategories = SubcategoryModel::getAllAssoc();
+                $this->view->addVar('subcategories', $subcategories);
+                $users = Adminusers::getAllAssoc();
+                $this->view->addVar('users', $users);
+                $this->view->addVar('Article', $Article);
+                $this->view->render('article/view-item.php');
+            } else {
+                $this->redirect($Url::link('admin/article/index'));
+            }
         } else { // выводим полный список
 
             $articles = $Article->getList()['results'];
@@ -105,19 +111,22 @@ class ArticleController extends Controller
         else {
             $Article = new Article();
             $Article = $Article->getById($id);
-            $Article->unixDate();
-            $Article->getArticleAuthors();
-            $title = 'Редактирование статьи';
-            $categories = CategoryModel::getAllAssoc();
-            $subcategories = (new SubcategoryModel())->getListShort();
-            $users = Adminusers::getAllAssoc();
-            $this->view->addVar('users', $users);
-            $this->view->addVar('categories', $categories);
-            $this->view->addVar('subcategories', $subcategories);
-            $this->view->addVar('Article', $Article);
-            $this->view->addVar('title', $title);
-
-            $this->view->render('article/edit.php');
+            if (isset($Article->id)) {
+                $Article->unixDate();
+                $Article->getArticleAuthors();
+                $title = 'Редактирование статьи';
+                $categories = CategoryModel::getAllAssoc();
+                $subcategories = (new SubcategoryModel())->getListShort();
+                $users = Adminusers::getAllAssoc();
+                $this->view->addVar('users', $users);
+                $this->view->addVar('categories', $categories);
+                $this->view->addVar('subcategories', $subcategories);
+                $this->view->addVar('Article', $Article);
+                $this->view->addVar('title', $title);
+                $this->view->render('article/edit.php');
+            } else {
+                $this->redirect($Url::link('admin/article/index'));
+            }
         }
 
     }
@@ -144,10 +153,14 @@ class ArticleController extends Controller
         else {
             $Article = new Article();
             $Article = $Article->getById($id);
-            $title = 'Удаление статьи';
-            $this->view->addVar('Article', $Article);
-            $this->view->addVar('title', $title);
-            $this->view->render('article/delete.php');
+            if (isset($Article->id)) {
+                $title = 'Удаление статьи';
+                $this->view->addVar('Article', $Article);
+                $this->view->addVar('title', $title);
+                $this->view->render('article/delete.php');
+            } else {
+                $this->redirect($Url::link('admin/article/index'));
+            }
         }
     }
 }

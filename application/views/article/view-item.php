@@ -41,6 +41,6 @@ $User = Config::getObject('core.user.class');
 <br>
 <div class="card" style="width: 100%; min-width: 320px; margin-bottom: 80px">
 <div class="card-body">
-<?= $Article->content ?>
+<?= nl2br($Article->content) ?>
 </div>
 </div>

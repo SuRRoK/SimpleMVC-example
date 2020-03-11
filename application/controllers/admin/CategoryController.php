@@ -3,9 +3,7 @@ namespace application\controllers\admin;
 use \application\models\CategoryModel as Category;
 use ItForFree\SimpleMVC\Config;
 
-/**
- *
- */
+
 class CategoryController extends \ItForFree\SimpleMVC\mvc\Controller
 {
     
@@ -18,17 +16,19 @@ class CategoryController extends \ItForFree\SimpleMVC\mvc\Controller
     
     public function indexAction()
     {
+        $Url = Config::get('core.url.class');
         $Category = new Category();
         $categoryId = $_GET['id'] ?? null;
-        
         if ($categoryId) {
-            $viewCategory = $Category->getById($_GET['id']);
-            $this->view->addVar('viewCategory', $viewCategory);
-            $this->view->render('category/view-item.php');
-        } else { // выводим полный список
-            
+            $Category = $Category->getById($_GET['id']);
+            if (isset($Category->id)) {
+                $this->view->addVar('viewCategory', $Category);
+                $this->view->render('category/view-item.php');
+            } else {
+                $this->redirect($Url::link('admin/category/index'));
+            }
+        } else {
             $categories = $Category->getList()['results'];
-//            vdie($categories);
             $this->view->addVar('categories', $categories);
             $this->view->render('category/index.php');
         }
@@ -43,8 +43,8 @@ class CategoryController extends \ItForFree\SimpleMVC\mvc\Controller
         if (!empty($_POST)) {
             if (!empty($_POST['saveNewCategory'])) {
                 $Category = new Category();
-                $newCategory = $Category->loadFromArray($_POST);
-                $newCategory->insert();
+                $Category = $Category->loadFromArray($_POST);
+                $Category->insert();
                 $this->redirect($Url::link('admin/category/index'));
             } 
             elseif (!empty($_POST['cancel'])) {
@@ -71,8 +71,8 @@ class CategoryController extends \ItForFree\SimpleMVC\mvc\Controller
             
             if (!empty($_POST['saveChanges'] )) {
                 $Category = new Category();
-                $newCategory = $Category->loadFromArray($_POST);
-                $newCategory->update();
+                $Category = $Category->loadFromArray($_POST);
+                $Category->update();
                 $this->redirect($Url::link("admin/category/index&id=$id"));
             } 
             elseif (!empty($_POST['cancel'])) {
@@ -81,10 +81,10 @@ class CategoryController extends \ItForFree\SimpleMVC\mvc\Controller
         }
         else {
             $Category = new Category();
-            $viewCategory = $Category->getById($id);
+            $Category = $Category->getById($id);
             $editCategoryTitle = 'Редактирование категории';
             
-            $this->view->addVar('viewCategory', $viewCategory);
+            $this->view->addVar('viewCategory', $Category);
             $this->view->addVar('editCategoryTitle', $editCategoryTitle);
             
             $this->view->render('category/edit.php');
@@ -103,8 +103,8 @@ class CategoryController extends \ItForFree\SimpleMVC\mvc\Controller
         if (!empty($_POST)) {
             if (!empty($_POST['deleteCategory'])) {
                 $Category = new Category();
-                $newCategory = $Category->loadFromArray($_POST);
-                $newCategory->delete();
+                $Category = $Category->loadFromArray($_POST);
+                $Category->delete();
                 
                 $this->redirect($Url::link('admin/category/index'));
             }
@@ -115,10 +115,10 @@ class CategoryController extends \ItForFree\SimpleMVC\mvc\Controller
         else {
 
             $Category = new Category();
-            $deletedCategory = $Category->getById($id);
+            $Category = $Category->getById($id);
             $deleteCategoryTitle = 'Удаление категории';
 
-            $this->view->addVar('deletedCategory', $deletedCategory);
+            $this->view->addVar('deletedCategory', $Category);
             $this->view->addVar('deleteCategoryTitle', $deleteCategoryTitle);
             $this->view->render('category/delete.php');
         }

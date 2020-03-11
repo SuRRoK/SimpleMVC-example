@@ -8,9 +8,9 @@ $User = Config::getObject('core.user.class');
 <?php include('includes/admin-categories-nav.php'); ?>
 
 <h2><?= $editCategoryTitle ?>
-    <span class="small">
+    <span class="badge badge-danger">
         <?= $User->returnIfAllowed('admin/category/delete',
-            '<a href=' . $Url::link('admin/category/delete&id=' . $_GET['id'])
+            '<a class="text-black-50" href=' . $Url::link('admin/category/delete&id=' . $_GET['id'])
             . '>[Удалить]</a>')?>
     </span>
 </h2>

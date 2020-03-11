@@ -7,6 +7,13 @@
     <div class="col ">
       <p class="lead"><?=$lead?></p>
     </div>
+    <?php if (isset($description)) { ?>
+    <div class="card" style="width: 100%; min-width: 320px">
+        <div class="card-body">
+            <p><?= $description ?></p>
+        </div>
+    </div>
+    <?php } ?>
 </div>
 
 <?php //vdie($articles);?>
