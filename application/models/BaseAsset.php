@@ -16,7 +16,7 @@ class BaseAsset extends SimpleAsset
 {
     public $basePath = 'JS/';
     public $js = [
-        'myjs/basejs.js'
+        'myjs/basejs.js',
     ];
     
     public $css = [

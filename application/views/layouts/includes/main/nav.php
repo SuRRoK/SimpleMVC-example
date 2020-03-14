@@ -43,6 +43,9 @@ $User = Config::getObject('core.user.class');
                 <a class="nav-link" href="<?= Url::link("admin/article/index") ?>"> Админка </a>
             </li>
         <?php endif; ?>
+        <li class="nav-item ">
+            <a class="nav-link" href="<?= Url::link("asset/index") ?>">Asset</a>
+        </li>
     </ul>
    </div>
 </nav>
