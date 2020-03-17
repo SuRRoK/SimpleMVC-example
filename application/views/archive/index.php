@@ -54,7 +54,6 @@
                 <span class="category hidden" id="authors<?= $Article->id?>"></span>
             </h3>
             <p class="summary"><?= $Article->summary ?></p>
-            <img id="loader-identity" src="JS/ajax-loader.gif" alt="gif">
 
             <ul class="ajax-load">
                 <li><a href="<?= Url::link('archive/article&id=' . $Article->id)?>" class="ajaxArticleBodyByPost" data-contentId="<?= $Article->id?>">Показать продолжение (POST)</a></li>

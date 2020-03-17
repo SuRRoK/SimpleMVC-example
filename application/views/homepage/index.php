@@ -49,7 +49,6 @@
             <p class="summary"><?php
                 $position = mb_strlen($Article->content) > $contentFirstSymbols ?  mb_strpos($Article->content, ' ', $contentFirstSymbols) : $contentFirstSymbols;
                 echo htmlspecialchars(mb_substr($Article->content, 0, $position) . '...')?></p>
-            <img id="loader-identity" src="JS/ajax-loader.gif" alt="gif">
 
             <ul class="ajax-load">
                 <li><a href="<?= Url::link('archive/article&id=' . $Article->id)?>" class="ajaxArticleBodyByPost" data-contentId="<?= $Article->id?>">Показать продолжение (POST)</a></li>

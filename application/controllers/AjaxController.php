@@ -37,7 +37,7 @@ class AjaxController extends \ItForFree\SimpleMVC\mvc\Controller
         }
         if (isset ($_POST['articleId'])) {
             $Article = (new ArticleModel)->getById((int)$_POST['articleId']);
-            echo isset($Article->id) ? json_encode(nl2br($Article->content), JSON_THROW_ON_ERROR, 512) : '';
+            echo isset($Article->id) ? json_encode(nl2br($Article->content)) : '';
         }
     }
 
