@@ -64,13 +64,18 @@ class ArchiveController extends \ItForFree\SimpleMVC\mvc\Controller
     public function subcategoryAction()
     {
         if (isset($_GET['id'])) {
-            $Subcategory = (new SubcategoryModel())->getById($_GET['id']);
-            if (isset($Subcategory->id)) {
-            $categoryFilter = ['type' => 'subcategoryId', 'value' => $_GET['id']];
-            $description = $Subcategory->description;
-            } else {
-                $categoryFilter = null;
+            if ($_GET['id'] === 'none') {
+                $categoryFilter = ['type' => 'subcategoryId', 'value' => $_GET['id']];
                 $description = null;
+            } else {
+                $Subcategory = (new SubcategoryModel())->getById($_GET['id']);
+                if (isset($Subcategory->id)) {
+                    $categoryFilter = ['type' => 'subcategoryId', 'value' => $_GET['id']];
+                    $description = $Subcategory->description;
+                } else {
+                    $categoryFilter = null;
+                    $description = null;
+                }
             }
         }
 
